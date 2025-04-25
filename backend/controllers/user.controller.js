@@ -1,6 +1,8 @@
+const BlacklistToken = require("../models/blacklistToken.model");
 const userModel = require("../models/user.model");
 const userService = require("../services/user.service");
 const { validationResult } = require("express-validator");
+const blacklistTokenModel = require("../models/blacklistToken.model");
 
 module.exports.registerUser = async (req, res, next) => {
   const errors = validationResult(req);
@@ -36,7 +38,7 @@ module.exports.loginUser = async (req, res, next) => {
   }
   const { email, password } = req.body;
   try {
-    const user =await  userModel.findOne({ email }).select("+password");
+    const user = await userModel.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({ message: "invalid email or password" });
     }
@@ -45,6 +47,8 @@ module.exports.loginUser = async (req, res, next) => {
       return res.status(401).json({ message: "invalid email or password" });
     }
     const token = user.generateAuthToken();
+    res.cookie("rizzCabsToken", token);
+
     res.status(200).json({
       user,
       token,
@@ -52,4 +56,21 @@ module.exports.loginUser = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+module.exports.getUserProfile = async (req, res, next) => {
+  try {
+    return res.status(200).json(req.user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.logoutUser = async (req, res, next) => {
+  const token =
+    req.cookies.rizzCabsToken || req.headers.authorization?.split(" ")[1];
+  res.clearCookie("rizzCabsToken");
+  await blacklistTokenModel.create({ token });
+
+  return res.status(200).json({ message: "Logged out successfully" });
 };
