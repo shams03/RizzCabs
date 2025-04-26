@@ -46,7 +46,7 @@ module.exports.loginUser = async (req, res, next) => {
       return res.status(401).json({ message: "invalid email or password" });
     }
     const token = user.generateAuthToken();
-    res.cookie("rizzCabsToken", token);
+    res.cookie("token", token);
 
     res.status(200).json({
       user,
@@ -66,9 +66,8 @@ module.exports.getUserProfile = async (req, res, next) => {
 };
 
 module.exports.logoutUser = async (req, res, next) => {
-  const token =
-    req.cookies.rizzCabsToken || req.headers.authorization?.split(" ")[1];
-  res.clearCookie("rizzCabsToken");
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+  res.clearCookie("token");
   await blacklistTokenModel.create({ token });
 
   return res.status(200).json({ message: "Logged out successfully" });

@@ -207,7 +207,7 @@ Retrieves the authenticated user's profile information. Requires a valid JWT tok
 
 #### Authentication
 
-- Requires a valid JWT token in the `rizzCabsToken` cookie or as a Bearer token in the `Authorization` header.
+- Requires a valid JWT token in the `token` cookie or as a Bearer token in the `Authorization` header.
 
 #### Response
 
@@ -267,7 +267,7 @@ Logs out the authenticated user by blacklisting their JWT token and clearing the
 
 #### Authentication
 
-- Requires a valid JWT token in the `rizzCabsToken` cookie or as a Bearer token in the `Authorization` header.
+- Requires a valid JWT token in the `token` cookie or as a Bearer token in the `Authorization` header.
 
 #### Response
 
@@ -296,7 +296,7 @@ The server encountered an error while processing the request.
 #### Notes
 
 - The JWT token is added to a blacklist and will be rejected for future requests.
-- The `rizzCabsToken` cookie is cleared on logout.
+- The `token` cookie is cleared on logout.
 - If the token is missing, invalid, or already blacklisted, a 401 Unauthorized error is returned.
 
 #### Example Usage
@@ -305,6 +305,7 @@ The server encountered an error while processing the request.
 curl -X GET http://localhost:3000/users/logout \
   -H "Authorization: Bearer <jwt_token>"
 ```
+
 ## Captain Registration Endpoint
 
 ### Endpoint: `/captains/register`
@@ -627,4 +628,3 @@ The server encountered an error while processing the request.
 curl -X GET http://localhost:3000/captains/logout \
   -H "Authorization: Bearer <jwt_token>"
 ```
-
